@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaBank - Sistema Bancário</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Ícones via Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN / ACESSO -->
+    <section id="login-screen" class="screen active">
+        <div class="login-container">
+            <div class="logo">
+                <i class='bx bxs-bank'></i>
+                <h1>Nova<span>Bank</span></h1>
+            </div>
+            <p class="subtitle">Acesse sua conta ou o painel administrativo</p>
+            
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="login-user">Usuário / Nº da Conta</label>
+                    <input type="text" id="login-user" placeholder="Ex: admin ou 1001" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-pass">Senha</label>
+                    <input type="password" id="login-pass" placeholder="••••••" required>
+                </div>
+                <button type="submit" class="btn-primary">Entrar no Sistema</button>
+            </form>
+
+            <div class="login-hints">
+                <small><strong>Admin Padrão:</strong> Usuário: <code>admin</code> | Senha: <code>1234</code></small>
+            </div>
+        </div>
+    </section>
+
+    <!-- SISTEMA PRINCIPAL (DASHBOARD) -->
+    <section id="app-screen" class="screen">
+        <!-- Menu Lateral -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class='bx bxs-bank'></i>
+                <h2>Nova<span>Bank</span></h2>
+            </div>
+            
+            <div class="user-badge">
+                <i class='bx bxs-user-circle'></i>
+                <div>
+                    <strong id="logged-user-name">Usuário</strong>
+                    <span id="logged-user-role">Perfil</span>
+                </div>
+            </div>
+
+            <nav id="nav-menu">
+                <!-- Preenchido dinamicamente pelo JS conforme o perfil -->
+            </nav>
+
+            <button id="btn-logout" class="btn-logout">
+                <i class='bx bx-log-out'></i> Sair
+            </button>
+        </aside>
+
+        <!-- Área de Conteúdo -->
+        <main class="main-content">
+            <header class="topbar">
+                <h2 id="page-title">Dashboard</h2>
+                <span id="current-date"></span>
+            </header>
+
+            <!-- ABA: DASHBOARD GERAL (Admin e Cliente) -->
+            <div id="tab-dashboard" class="tab-content active">
+                <div class="cards-grid" id="dashboard-cards">
+                    <!-- Cards inseridos via JS -->
+                </div>
+                <div class="recent-activity card-box">
+                    <h3>Últimas Movimentações</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Conta</th>
+                                <th>Tipo</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-transactions"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ABA: ABRIR CONTA (Apenas Admin) -->
+            <div id="tab-open-account" class="tab-content">
+                <div class="card-box form-box">
+                    <h3>Abertura de Nova Conta Corrente</h3>
+                    <form id="form-open-account">
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Nome Completo do Titular</label>
+                                <input type="text" id="acc-name" required>
+                            </div>
+                            <div class="input-group">
+                                <label>CPF</label>
+                                <input type="text" id="acc-cpf" placeholder="000.000.000-00" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Depósito Inicial (R$)</label>
+                                <input type="number" id="acc-deposit" min="0" step="0.01" value="0.00" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Senha de Acesso do Cliente</label>
+                                <input type="password" id="acc-pass" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Criar Conta e Gerar Cartão</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ABA: GERENCIAR CONTAS / FECHAR CONTA (Apenas Admin) -->
+            <div id="tab-manage-accounts" class="tab-content">
+                <div class="card-box">
+                    <h3>Contas Cadastradas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nº Conta</th>
+                                <th>Titular</th>
+                                <th>CPF</th>
+                                <th>Saldo</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accounts-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ABA: OPERAÇÕES - DEPÓSITO E SAQUE (Cliente e Admin) -->
+            <div id="tab-operations" class="tab-content">
+                <div class="operations-grid">
+                    <div class="card-box">
+                        <h3><i class='bx bx-plus-circle'></i> Realizar Depósito</h3>
+                        <form id="form-deposit">
+                            <div class="input-group" id="admin-dep-acc-group">
+                                <label>Número da Conta</label>
+                                <input type="text" id="dep-account" placeholder="Ex: 1001">
+                            </div>
+                            <div class="input-group">
+                                <label>Valor do Depósito (R$)</label>
+                                <input type="number" id="dep-amount" min="1" step="0.01" required>
+                            </div>
+                            <button type="submit" class="btn-success">Confirmar Depósito</button>
+                        </form>
+                    </div>
+
+                    <div class="card-box">
+                        <h3><i class='bx bx-minus-circle'></i> Realizar Saque</h3>
+                        <form id="form-withdraw">
+                            <div class="input-group" id="admin-with-acc-group">
+                                <label>Número da Conta</label>
+                                <input type="text" id="with-account" placeholder="Ex: 1001">
+                            </div>
+                            <div class="input-group">
+                                <label>Valor do Saque (R$)</label>
+                                <input type="number" id="with-amount" min="1" step="0.01" required>
+                            </div>
+                            <button type="submit" class="btn-danger">Confirmar Saque</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA: EXTRATO BANCÁRIO (Cliente) -->
+            <div id="tab-statement" class="tab-content">
+                <div class="card-box">
+                    <div class="statement-header">
+                        <h3>Extrato Detalhado</h3>
+                        <div class="balance-badge">Saldo Atual: <strong id="statement-balance">R$ 0,00</strong></div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data / Hora</th>
+                                <th>Descrição</th>
+                                <th>Tipo</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statement-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ABA: MEU CARTÃO DE DÉBITO (Cliente) -->
+            <div id="tab-my-card" class="tab-content">
+                <div class="card-box center-content">
+                    <h3>Seu Cartão de Débito</h3>
+                    <p>Utilize o botão abaixo para imprimir o comprovante do seu cartão.</p>
+                    <div id="client-card-container"></div>
+                    <button onclick="window.print()" class="btn-primary" style="margin-top: 20px;">
+                        <i class='bx bx-printer'></i> Imprimir Cartão
+                    </button>
+                </div>
+            </div>
+
+            <!-- ABA: SIMULAÇÃO DE FINANCIAMENTO (Cliente e Admin) -->
+            <div id="tab-loan" class="tab-content">
+                <div class="operations-grid">
+                    <div class="card-box">
+                        <h3>Simulador de Financiamento (Tabela Price)</h3>
+                        <form id="form-loan">
+                            <div class="input-group">
+                                <label>Valor Desejado (R$)</label>
+                                <input type="number" id="loan-amount" min="500" step="100" value="10000" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Prazo (Meses)</label>
+                                <select id="loan-months">
+                                    <option value="12">12 meses</option>
+                                    <option value="24">24 meses</option>
+                                    <option value="36">36 meses</option>
+                                    <option value="48">48 meses</option>
+                                    <option value="60">60 meses</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Taxa de Juros Mensal (%)</label>
+                                <input type="number" id="loan-rate" step="0.1" value="1.8" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Calcular Parcelas</button>
+                        </form>
+                    </div>
+
+                    <div class="card-box" id="loan-result-box" style="display: none;">
+                        <h3>Resultado da Simulação</h3>
+                        <div class="loan-summary">
+                            <p>Valor Solicitado: <strong id="res-loan-amount"></strong></p>
+                            <p>Parcela Mensal: <strong id="res-loan-installment" class="highlight"></strong></p>
+                            <p>Total a Pagar: <strong id="res-loan-total"></strong></p>
+                            <p>Total de Juros: <strong id="res-loan-interest"></strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </section>
+
+    <!-- MODAL DE CARTÃO GERADO NA ABERTURA DE CONTA (PARA IMPRESSÃO) -->
+    <div id="card-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-card-modal">&times;</span>
+            <h3>Conta Aberta com Sucesso!</h3>
+            <p>Abaixo está o cartão de débito gerado para o cliente:</p>
+            
+            <!-- ÁREA IMPRIMÍVEL DO CARTÃO -->
+            <div id="printable-area">
+                <div class="debit-card">
+                    <div class="card-top">
+                        <span class="bank-name">NovaBank</span>
+                        <span class="card-type">DÉBITO</span>
+                    </div>
+                    <div class="card-chip"></div>
+                    <div class="card-number" id="modal-card-number">0000 0000 0000 0000</div>
+                    <div class="card-bottom">
+                        <div>
+                            <small>TITULAR</small>
+                            <div id="modal-card-holder">NOME DO CLIENTE</div>
+                        </div>
+                        <div>
+                            <small>VALIDADE</small>
+                            <div id="modal-card-expiry">12/31</div>
+                        </div>
+                        <div>
+                            <small>CVV</small>
+                            <div id="modal-card-cvv">123</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="print-info">
+                    <p><strong>Agência:</strong> 0001 | <strong>Conta:</strong> <span id="modal-acc-num"></span></p>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button onclick="window.print()" class="btn-primary"><i class='bx bx-printer'></i> Imprimir Cartão</button>
+                <button id="btn-done-modal" class="btn-secondary">Concluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="javascript.js"></script>
+</body>
+</html>
